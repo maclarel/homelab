@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  pihole:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: 'Canada/Toronto'
+    volumes:
+      - './etc-nginx/:/etc/nginx/'
+      - './var-www/:/var/www/'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    restart: unless-stopped
