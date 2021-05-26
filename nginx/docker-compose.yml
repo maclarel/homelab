@@ -1,5 +1,4 @@
-version: "3"
-
+version: "2.4"
 services:
   pihole:
     container_name: nginx
@@ -16,3 +15,5 @@ services:
       - 127.0.0.1
       - 1.1.1.1
     restart: unless-stopped
+    cpus: 1
+    mem_limit: 128m
