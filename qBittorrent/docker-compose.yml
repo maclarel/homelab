@@ -41,7 +41,7 @@ services:
     network_mode: service:protonvpn
     volumes:
       - ./config:/config
-      - /mnt/freeparking/torrent:/downloads
+      - ./downloads:/downloads
     restart: unless-stopped
     cpus: 1
     mem_limit: 256m
