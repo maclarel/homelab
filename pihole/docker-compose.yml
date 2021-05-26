@@ -1,12 +1,11 @@
-version: "3"
-
+version: "2.4"
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - "0.0.0.0:53:53/tcp"
+      - "0.0.0.0:53:53/udp"
       - "81:80/tcp"
       - "444:443/tcp"
     environment:
@@ -20,3 +19,5 @@ services:
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+    cpus: 1
+    mem_limit: 1g
