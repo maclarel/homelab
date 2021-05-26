@@ -1,0 +1,53 @@
+version: '2.4'
+services:
+  protonvpn:
+    container_name: protonvpn
+    environment:
+      # Credentials
+      PROTONVPN_USERNAME: $PROTONVPN_USERNAME
+      PROTONVPN_PASSWORD: $PROTONVPN_PASSWORD
+      # Override these where applicable
+      PROTONVPN_COUNTRY: ${PROTONVPN_COUNTRY:-IS}
+      PROTONVPN_TIER: ${PROTONVPN_TIER:-1}
+      PROTONVPN_CHECK_INTERVAL: 90
+      PROTONVPN_FAIL_THRESHOLD: 3
+      # Configure split tunnelling
+      PROTONVPN_EXCLUDE_CIDRS: 10.0.1.0/24
+    image: ghcr.io/tprasadtp/protonvpn:latest
+    restart: unless-stopped
+    networks:
+      - internet
+      - proxy
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    # Expose qBittorrent container's port here
+    ports:
+     - 8080:8080
+    cpus: 1
+    mem_limit: 128m
+  # qBittorrent using the above VPN
+  qbittorrent:
+    depends_on:
+      - protonvpn
+    image: ghcr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Canada/Toronto
+      - WEBUI_PORT=8080
+    network_mode: service:protonvpn
+    volumes:
+      - ./config:/config
+      - /mnt/freeparking/torrent:/downloads
+    restart: unless-stopped
+    cpus: 1
+    mem_limit: 256m
+volumes:
+  config:
+networks:
+  internet:
+  proxy:
+    internal: true
